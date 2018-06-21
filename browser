@@ -1,37 +1,19 @@
 #!/bin/sh
 
-concatenate() {
-while read -r REPLY; do
-  printf '%s\n' "${REPLY}"
-done
-}
-
-background_color="#AF5FAF"
-browser="chromium-browser"
-window_manager="i3"
-theme="Adwaita"
-font="Sans 10"
-
-modifier="Mod1"
-up="j"
-down="k"
-left="h"
-right="l"
-
 sudo apt-get install --no-install-recommends --assume-yes \
 	alsa-utils \
 	xorg \
-	${window_manager} \
+	i3 \
 	gnome-themes-standard \
 	adwaita-icon-theme \
-	${browser}
+	chromium-borwser
 
-concatenate > "${HOME}/.xinitrc" << EOF
+cat > "${HOME}/.xinitrc" << 'EOF'
 #!/bin/sh
 
 if [ -x /usr/bin/VBoxClient ]; then
   for process in ${HOME}/.vboxclient-*.pid; do
-    [ -w "\${process}" ] || rm -f "\${process}"
+    [ -w "${process}" ] || rm -f "${process}"
   done
   /usr/bin/VBoxClient --clipboard || true
   /usr/bin/VBoxClient --checkhostversion || true
@@ -48,21 +30,21 @@ if [ -x /usr/bin/amixer ]; then
 fi
 
 if [ -x /usr/bin/xsetroot ]; then
-  /usr/bin/xsetroot -solid '${background_color}'
+  /usr/bin/xsetroot -solid '#AF5FAF'
 fi
 
 if [ -x /usr/bin/setxkbmap ]; then
   /usr/bin/setxkbmap -layout us -option caps:escape
 fi
 
-exec ${window_manager}
+exec i3
 EOF
 
-concatenate > "${HOME}/.gtkrc-2.0" << EOF
-gtk-theme-name="${theme}"
-gtk-icon-theme-name="${theme}"
-gtk-font-name="${font}"
-gtk-cursor-theme-name="${theme}"
+cat > "${HOME}/.gtkrc-2.0" << 'EOF'
+gtk-theme-name="Adwaita"
+gtk-icon-theme-name="Adwaita"
+gtk-font-name="Sans 10"
+gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
 gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
 gtk-toolbar-icon-size=GTK_ICON_SIZE_BUTTON
@@ -76,15 +58,14 @@ gtk-xft-hintstyle="hintfull"
 gtk-xft-rgba="rgb"
 EOF
 
-
 install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0"
-concatenate > "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0/settings.ini" << EOF
+cat > "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0/settings.ini" << 'EOF'
 [Settings]
 gtk-application-prefer-dark-theme=1
-gtk-theme-name=${theme}
-gtk-icon-theme-name=${theme}
-gtk-font-name=${font}
-gtk-cursor-theme-name=${theme}
+gtk-theme-name=Adwaita
+gtk-icon-theme-name=Adwaita
+gtk-font-name=Sans 10
+gtk-cursor-theme-name=Adwaita
 gtk-cursor-theme-size=0
 gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
 gtk-toolbar-icon-size=GTK_ICON_SIZE_BUTTON
@@ -99,52 +80,52 @@ gtk-xft-rgba=rgb
 EOF
 
 install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/i3"
-concatenate > "${XDG_CONFIG_HOME:-${HOME}/.config}/i3/config" << EOF
+cat > "${XDG_CONFIG_HOME:-${HOME}/.config}/i3/config" << 'EOF'
 # i3 config file (v4)
 
 font pango:monospace 8
-floating_modifier ${modifier}
+floating_modifier Mod1
 new_window pixel 3
 
-bindsym ${modifier}+Shift+q kill
-bindsym ${modifier}+f fullscreen toggle
-bindsym ${modifier}+Shift+space floating toggle
+bindsym I3_MODIFIER+Shift+q kill
+bindsym Mod1+f fullscreen toggle
+bindsym Mod1+Shift+space floating toggle
 
-bindsym ${modifier}+${up} focus up
-bindsym ${modifier}+${down} focus down
-bindsym ${modifier}+${left} focus left
-bindsym ${modifier}+${right} focus right
+bindsym Mod1+j focus up
+bindsym Mod1+DEFAULT_I3_DOWN focus down
+bindsym Mod1+h focus left
+bindsym Mod1+l focus right
 
-bindsym ${modifier}+Up focus up
-bindsym ${modifier}+Down focus down
-bindsym ${modifier}+Left focus left
-bindsym ${modifier}+Right focus right
+bindsym Mod1+Up focus up
+bindsym Mod1+Down focus down
+bindsym Mod1+Left focus left
+bindsym Mod1+Right focus right
 
-bindsym ${modifier}+Shift+${up} move up
-bindsym ${modifier}+Shift+${down} move down
-bindsym ${modifier}+Shift+${left} move left
-bindsym ${modifier}+Shift+${right} move right
+bindsym Mod1+Shift+DEFAUTL_I3_UP move up
+bindsym Mod1+Shift+DEFAUTL_I3_DONW move down
+bindsym Mod1+Shift+DEFAUTL_I3_LEFT move left
+bindsym Mod1+Shift+DEFAUTL_I3_RIGHT move right
 
-bindsym ${modifier}+Shift+Up move up
-bindsym ${modifier}+Shift+Down move down
-bindsym ${modifier}+Shift+Left move left
-bindsym ${modifier}+Shift+Right move right
+bindsym Mod1+Shift+Up move up
+bindsym Mod1+Shift+Down move down
+bindsym Mod1+Shift+Left move left
+bindsym Mod1+Shift+Right move right
 
-bindsym ${modifier}+g split h
-bindsym ${modifier}+v split v
+bindsym Mod1+g split h
+bindsym Mod1+v split v
 
-bindsym ${modifier}+s layout stacking
-bindsym ${modifier}+w layout tabbed
-bindsym ${modifier}+e layout toggle split
+bindsym Mod1+s layout stacking
+bindsym Mod1+w layout tabbed
+bindsym Mod1+e layout toggle split
 
-bindsym ${modifier}+a focus parent
-bindsym ${modifier}+space focus mode_toggle
+bindsym Mod1+a focus parent
+bindsym Mod1+space focus mode_toggle
 
 mode "resize" {
-	bindsym ${up} resize shrink height 1 px or 1 ppt
-	bindsym ${down} resize grow height 1 px or 1 ppt
-	bindsym ${left} resize shrink width 1 px or 1 ppt
-	bindsym ${right} resize grow width 1 px or 1 ppt
+	bindsym j resize shrink height 1 px or 1 ppt
+	bindsym DEFAULT_I3_DOWN resize grow height 1 px or 1 ppt
+	bindsym h resize shrink width 1 px or 1 ppt
+	bindsym l resize grow width 1 px or 1 ppt
 
 	bindsym Up resize shrink height 1 px or 1 ppt
 	bindsym Down resize grow height 1 px or 1 ppt
@@ -153,29 +134,30 @@ mode "resize" {
 
 	bindsym Escape mode "default"
 }
-bindsym ${modifier}+r mode "resize"
+bindsym Mod1+r mode "resize"
 
-bindsym ${modifier}+Shift+c reload
-bindsym ${modifier}+Shift+r restart
+bindsym Mod1+Shift+c reload
+bindsym Mod1+Shift+r restart
 
-bindsym ${modifier}+Return exec "i3-sensible-terminal"
-bindsym ${modifier}+0 exec "${browser}"
-bindsym ${modifier}+9 exec "xrandr --output VGA-1 --auto"
-bindsym ${modifier}+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -b 'Yes' 'i3-msg exit'"
+bindsym Mod1+Return exec "i3-sensible-terminal"
+bindsym Mod1+0 exec "chromium-borwser"
+bindsym Mod1+9 exec "xrandr --output VGA-1 --auto"
+bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -b 'Yes' 'i3-msg exit'"
 
-bindsym ${modifier}+1 workspace 1
-bindsym ${modifier}+2 workspace 2
-bindsym ${modifier}+3 workspace 3
-bindsym ${modifier}+4 workspace 4
+bindsym Mod1+1 workspace 1
+bindsym Mod1+2 workspace 2
+bindsym Mod1+3 workspace 3
+bindsym Mod1+4 workspace 4
 
-bindsym ${modifier}+Shift+1 move container to workspace 1
-bindsym ${modifier}+Shift+2 move container to workspace 2
-bindsym ${modifier}+Shift+3 move container to workspace 3
-bindsym ${modifier}+Shift+4 move container to workspace 4
+bindsym Mod1+Shift+1 move container to workspace 1
+bindsym Mod1+Shift+2 move container to workspace 2
+bindsym Mod1+Shift+3 move container to workspace 3
+bindsym Mod1+Shift+4 move container to workspace 4
 
 bar {
 	mode hide
 	hidden_state hide
-	modifier ${modifier}
+	modifier Mod1
 }
 EOF
+

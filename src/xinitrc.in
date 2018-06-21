@@ -1,0 +1,31 @@
+cat > "${HOME}/.xinitrc" << 'EOF'
+#!/bin/sh
+
+if [ -x /usr/bin/VBoxClient ]; then
+  for process in ${HOME}/.vboxclient-*.pid; do
+    [ -w "${process}" ] || rm -f "${process}"
+  done
+  /usr/bin/VBoxClient --clipboard || true
+  /usr/bin/VBoxClient --checkhostversion || true
+  /usr/bin/VBoxClient --display || true
+  /usr/bin/VBoxClient --seamless || true
+  /usr/bin/VBoxClient --draganddrop || true
+fi
+
+if [ -x /usr/bin/amixer ]; then
+  /usr/bin/amixer set Master unmute
+  /usr/bin/amixer set Master 100%
+  /usr/bin/amixer set PCM unmute
+  /usr/bin/amixer set PCM 100%
+fi
+
+if [ -x /usr/bin/xsetroot ]; then
+  /usr/bin/xsetroot -solid 'DEFAULT_BACKGROUND_COLOR'
+fi
+
+if [ -x /usr/bin/setxkbmap ]; then
+  /usr/bin/setxkbmap -layout us -option caps:escape
+fi
+
+exec DEFAULT_WINDOW_MANAGER
+EOF
