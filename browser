@@ -1,0 +1,181 @@
+#!/bin/sh
+
+concatenate() {
+while read -r REPLY; do
+  printf '%s\n' "${REPLY}"
+done
+}
+
+background_color="#AF5FAF"
+browser="chromium-browser"
+window_manager="i3"
+theme="Adwaita"
+font="Sans 10"
+
+modifier="Mod1"
+up="j"
+down="k"
+left="h"
+right="l"
+
+sudo apt-get install --no-install-recommends --assume-yes \
+	alsa-utils \
+	xorg \
+	${window_manager} \
+	gnome-themes-standard \
+	adwaita-icon-theme \
+	${browser}
+
+concatenate > "${HOME}/.xinitrc" << EOF
+#!/bin/sh
+
+if [ -x /usr/bin/VBoxClient ]; then
+  for process in ${HOME}/.vboxclient-*.pid; do
+    [ -w "\${process}" ] || rm -f "\${process}"
+  done
+  /usr/bin/VBoxClient --clipboard || true
+  /usr/bin/VBoxClient --checkhostversion || true
+  /usr/bin/VBoxClient --display || true
+  /usr/bin/VBoxClient --seamless || true
+  /usr/bin/VBoxClient --draganddrop || true
+fi
+
+if [ -x /usr/bin/amixer ]; then
+  /usr/bin/amixer set Master unmute
+  /usr/bin/amixer set Master 100%
+  /usr/bin/amixer set PCM unmute
+  /usr/bin/amixer set PCM 100%
+fi
+
+if [ -x /usr/bin/xsetroot ]; then
+  /usr/bin/xsetroot -solid '${background_color}'
+fi
+
+if [ -x /usr/bin/setxkbmap ]; then
+  /usr/bin/setxkbmap -layout us -option caps:escape
+fi
+
+exec ${window_manager}
+EOF
+
+concatenate > "${HOME}/.gtkrc-2.0" << EOF
+gtk-theme-name="${theme}"
+gtk-icon-theme-name="${theme}"
+gtk-font-name="${font}"
+gtk-cursor-theme-name="${theme}"
+gtk-cursor-theme-size=0
+gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
+gtk-toolbar-icon-size=GTK_ICON_SIZE_BUTTON
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=1
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle="hintfull"
+gtk-xft-rgba="rgb"
+EOF
+
+
+install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0"
+concatenate > "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0/settings.ini" << EOF
+[Settings]
+gtk-application-prefer-dark-theme=1
+gtk-theme-name=${theme}
+gtk-icon-theme-name=${theme}
+gtk-font-name=${font}
+gtk-cursor-theme-name=${theme}
+gtk-cursor-theme-size=0
+gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
+gtk-toolbar-icon-size=GTK_ICON_SIZE_BUTTON
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=1
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintfull
+gtk-xft-rgba=rgb
+EOF
+
+install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/i3"
+concatenate > "${XDG_CONFIG_HOME:-${HOME}/.config}/i3/config" << EOF
+# i3 config file (v4)
+
+font pango:monospace 8
+floating_modifier ${modifier}
+new_window pixel 3
+
+bindsym ${modifier}+Shift+q kill
+bindsym ${modifier}+f fullscreen toggle
+bindsym ${modifier}+Shift+space floating toggle
+
+bindsym ${modifier}+${up} focus up
+bindsym ${modifier}+${down} focus down
+bindsym ${modifier}+${left} focus left
+bindsym ${modifier}+${right} focus right
+
+bindsym ${modifier}+Up focus up
+bindsym ${modifier}+Down focus down
+bindsym ${modifier}+Left focus left
+bindsym ${modifier}+Right focus right
+
+bindsym ${modifier}+Shift+${up} move up
+bindsym ${modifier}+Shift+${down} move down
+bindsym ${modifier}+Shift+${left} move left
+bindsym ${modifier}+Shift+${right} move right
+
+bindsym ${modifier}+Shift+Up move up
+bindsym ${modifier}+Shift+Down move down
+bindsym ${modifier}+Shift+Left move left
+bindsym ${modifier}+Shift+Right move right
+
+bindsym ${modifier}+g split h
+bindsym ${modifier}+v split v
+
+bindsym ${modifier}+s layout stacking
+bindsym ${modifier}+w layout tabbed
+bindsym ${modifier}+e layout toggle split
+
+bindsym ${modifier}+a focus parent
+bindsym ${modifier}+space focus mode_toggle
+
+mode "resize" {
+	bindsym ${up} resize shrink height 1 px or 1 ppt
+	bindsym ${down} resize grow height 1 px or 1 ppt
+	bindsym ${left} resize shrink width 1 px or 1 ppt
+	bindsym ${right} resize grow width 1 px or 1 ppt
+
+	bindsym Up resize shrink height 1 px or 1 ppt
+	bindsym Down resize grow height 1 px or 1 ppt
+	bindsym Left resize shrink width 1 px or 1 ppt
+	bindsym Right resize grow width 1 px or 1 ppt
+
+	bindsym Escape mode "default"
+}
+bindsym ${modifier}+r mode "resize"
+
+bindsym ${modifier}+Shift+c reload
+bindsym ${modifier}+Shift+r restart
+
+bindsym ${modifier}+Return exec "i3-sensible-terminal"
+bindsym ${modifier}+0 exec "${browser}"
+bindsym ${modifier}+9 exec "xrandr --output VGA-1 --auto"
+bindsym ${modifier}+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -b 'Yes' 'i3-msg exit'"
+
+bindsym ${modifier}+1 workspace 1
+bindsym ${modifier}+2 workspace 2
+bindsym ${modifier}+3 workspace 3
+bindsym ${modifier}+4 workspace 4
+
+bindsym ${modifier}+Shift+1 move container to workspace 1
+bindsym ${modifier}+Shift+2 move container to workspace 2
+bindsym ${modifier}+Shift+3 move container to workspace 3
+bindsym ${modifier}+Shift+4 move container to workspace 4
+
+bar {
+	mode hide
+	hidden_state hide
+	modifier ${modifier}
+}
+EOF
