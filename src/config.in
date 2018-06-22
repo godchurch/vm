@@ -6,7 +6,7 @@ font pango:monospace 8
 floating_modifier DEFAULT_I3_MODIFIER
 new_window pixel 3
 
-bindsym I3_MODIFIER+Shift+q kill
+bindsym DEFAULT_I3_MODIFIER+Shift+q kill
 bindsym DEFAULT_I3_MODIFIER+f fullscreen toggle
 bindsym DEFAULT_I3_MODIFIER+Shift+space floating toggle
 
@@ -20,10 +20,10 @@ bindsym DEFAULT_I3_MODIFIER+Down focus down
 bindsym DEFAULT_I3_MODIFIER+Left focus left
 bindsym DEFAULT_I3_MODIFIER+Right focus right
 
-bindsym DEFAULT_I3_MODIFIER+Shift+DEFAUTL_I3_UP move up
-bindsym DEFAULT_I3_MODIFIER+Shift+DEFAUTL_I3_DONW move down
-bindsym DEFAULT_I3_MODIFIER+Shift+DEFAUTL_I3_LEFT move left
-bindsym DEFAULT_I3_MODIFIER+Shift+DEFAUTL_I3_RIGHT move right
+bindsym DEFAULT_I3_MODIFIER+Shift+DEFAULT_I3_UP move up
+bindsym DEFAULT_I3_MODIFIER+Shift+DEFAULT_I3_DOWN move down
+bindsym DEFAULT_I3_MODIFIER+Shift+DEFAULT_I3_LEFT move left
+bindsym DEFAULT_I3_MODIFIER+Shift+DEFAULT_I3_RIGHT move right
 
 bindsym DEFAULT_I3_MODIFIER+Shift+Up move up
 bindsym DEFAULT_I3_MODIFIER+Shift+Down move down
