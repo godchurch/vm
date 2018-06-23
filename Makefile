@@ -1,38 +1,33 @@
 SRC = src
 BUILD = build
+M4 = --prefix-builtins --include='$(SRC)'
 
-BROWSER_SRC_LIST = \
-			 $(SRC)/browser.in \
-			 $(SRC)/config.in \
-			 $(SRC)/gtkrc-2.0.in \
-			 $(SRC)/packages.in \
-			 $(SRC)/settings.ini.in \
-			 $(SRC)/xinitrc.in
+LIST_BROWSER = \
+							 $(SRC)/browser.in \
+							 $(SRC)/config.in \
+							 $(SRC)/gtkrc-2.0.in \
+							 $(SRC)/packages.in \
+							 $(SRC)/settings.ini.in \
+							 $(SRC)/xinitrc.in
 
-BROWSER_SED = \
-			s|DEFAULT_BACKGROUND_COLOR|\#AF5FAF|g; \
-			s|DEFAULT_BROWSER|chromium-browser|g; \
-			s|DEFAULT_WINDOW_MANAGER|i3|g; \
-			s|DEFAULT_THEME|Adwaita|g; \
-			s|DEFAULT_FONT|Sans 10|g; \
-			s|DEFAULT_I3_MODIFIER|Mod1|g; \
-			s|DEFAULT_I3_UP|j|g; \
-			s|DEFAULT_I3_DOWN|k|g; \
-			s|DEFAULT_I3_LEFT|h|g; \
-			s|DEFAULT_I3_RIGHT|l|g
+SED_BROWSER = \
+							s|DEFAULT_BACKGROUND_COLOR|\#AF5FAF|g; \
+							s|DEFAULT_WINDOW_MANAGER|i3|g; \
+							s|DEFAULT_BROWSER|chromium-browser|g; \
+							s|DEFAULT_THEME|Adwaita|g; \
+							s|DEFAULT_FONT|Sans 10|g; \
+							s|DEFAULT_I3_MODIFIER|Mod1|g; \
+							s|DEFAULT_I3_UP|j|g; \
+							s|DEFAULT_I3_DOWN|k|g; \
+							s|DEFAULT_I3_LEFT|h|g; \
+							s|DEFAULT_I3_RIGHT|l|g
 
 default: browser
 
 clean:
-	rm -rf browser $(BUILD)
+	rm -rf browser
 
 .PHONY: default clean
 
-browser: %: $(BUILD)/%.in
-	sed -e '$(BROWSER_SED)' '$<' > '$@'
-
-$(BUILD)/browser.in: $(BROWSER_SRC_LIST) | $(BUILD)
-	m4 -P -I './$(SRC)' '$(SRC)/browser.in' > '$@'
-
-$(BUILD):
-	install -d '$@'
+browser: $(LIST_BROWSER)
+	m4 $(M4) '$<' | sed -e '$(SED_BROWSER)' > '$@'
