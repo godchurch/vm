@@ -1,14 +1,14 @@
 #!/bin/sh
 
 sudo apt-get install --no-install-recommends --assume-yes \
-	alsa-utils \
-	xorg \
-	i3 \
-	gnome-themes-standard \
-	adwaita-icon-theme \
-	chromium-browser
+    alsa-utils \
+    xorg \
+    i3 \
+    gnome-themes-standard \
+    adwaita-icon-theme \
+    chromium-browser
 
-cat > "${HOME}/.xinitrc" << 'EOF'
+cat > "$HOME/.xinitrc" << '_XINITRC'
 #!/bin/sh
 
 if [ -x /usr/bin/VBoxClient ]; then
@@ -38,9 +38,9 @@ if [ -x /usr/bin/setxkbmap ]; then
 fi
 
 exec i3
-EOF
+_XINITRC
 
-cat > "${HOME}/.gtkrc-2.0" << 'EOF'
+cat > "$HOME/.gtkrc-2.0" << '_GTKRC20'
 gtk-theme-name="Adwaita"
 gtk-icon-theme-name="Adwaita"
 gtk-font-name="Sans 10"
@@ -56,10 +56,10 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle="hintfull"
 gtk-xft-rgba="rgb"
-EOF
+_GTKRC20
 
-install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0"
-cat > "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0/settings.ini" << 'EOF'
+install --directory "${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0"
+cat > "${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0/settings.ini" << '_SETTINGSINI'
 [Settings]
 gtk-application-prefer-dark-theme=1
 gtk-theme-name=Adwaita
@@ -77,10 +77,10 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb
-EOF
+_SETTINGSINI
 
-install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/i3"
-cat > "${XDG_CONFIG_HOME:-${HOME}/.config}/i3/config" << 'EOF'
+install --directory "${XDG_CONFIG_HOME:-$HOME/.config}/i3"
+cat > "${XDG_CONFIG_HOME:-$HOME/.config}/i3/config" << '_CONFIG'
 # i3 config file (v4)
 
 font pango:monospace 8
@@ -159,5 +159,6 @@ bar {
 	hidden_state hide
 	modifier Mod1
 }
-EOF
+_CONFIG
 
+exit 0
