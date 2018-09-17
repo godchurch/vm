@@ -1,4 +1,4 @@
-cat > "${HOME}/.xinitrc" << 'EOF'
+cat > "$HOME/.xinitrc" << '_XINITRC'
 #!/bin/sh
 
 if [ -x /usr/bin/VBoxClient ]; then
@@ -28,4 +28,4 @@ if [ -x /usr/bin/setxkbmap ]; then
 fi
 
 exec DEFAULT_WINDOW_MANAGER
-EOF
+_XINITRC

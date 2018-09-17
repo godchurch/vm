@@ -80,7 +80,7 @@ gtk-xft-rgba=rgb
 _SETTINGSINI
 
 install --directory "${XDG_CONFIG_HOME:-$HOME/.config}/i3"
-cat > "${XDG_CONFIG_HOME:-$HOME/.config}/i3/config" << '_CONFIG'
+cat > "${XDG_CONFIG_HOME:-$HOME/.config}/i3/config" << '_I3CONFIG'
 # i3 config file (v4)
 
 font pango:monospace 8
@@ -159,6 +159,5 @@ bar {
 	hidden_state hide
 	modifier Mod1
 }
-_CONFIG
+_I3CONFIG
 
-exit 0

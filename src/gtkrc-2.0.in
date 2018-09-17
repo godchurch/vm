@@ -1,4 +1,4 @@
-cat > "${HOME}/.gtkrc-2.0" << 'EOF'
+cat > "$HOME/.gtkrc-2.0" << '_GTKRC20'
 gtk-theme-name="DEFAULT_THEME"
 gtk-icon-theme-name="DEFAULT_THEME"
 gtk-font-name="DEFAULT_FONT"
@@ -14,4 +14,4 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle="hintfull"
 gtk-xft-rgba="rgb"
-EOF
+_GTKRC20

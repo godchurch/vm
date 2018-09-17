@@ -1,5 +1,5 @@
-install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0"
-cat > "${XDG_CONFIG_HOME:-${HOME}/.config}/gtk-3.0/settings.ini" << 'EOF'
+install --directory "${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0"
+cat > "${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0/settings.ini" << '_SETTINGSINI'
 [Settings]
 gtk-application-prefer-dark-theme=1
 gtk-theme-name=DEFAULT_THEME
@@ -17,4 +17,4 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb
-EOF
+_SETTINGSINI

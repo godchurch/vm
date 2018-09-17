@@ -1,5 +1,5 @@
-install --directory "${XDG_CONFIG_HOME:-${HOME}/.config}/i3"
-cat > "${XDG_CONFIG_HOME:-${HOME}/.config}/i3/config" << 'EOF'
+install --directory "${XDG_CONFIG_HOME:-$HOME/.config}/i3"
+cat > "${XDG_CONFIG_HOME:-$HOME/.config}/i3/config" << '_I3CONFIG'
 # i3 config file (v4)
 
 font pango:monospace 8
@@ -78,4 +78,4 @@ bar {
 	hidden_state hide
 	modifier DEFAULT_I3_MODIFIER
 }
-EOF
+_I3CONFIG

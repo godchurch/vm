@@ -1,7 +1,7 @@
 sudo apt-get install --no-install-recommends --assume-yes \
-	alsa-utils \
-	xorg \
-	DEFAULT_WINDOW_MANAGER \
-	gnome-themes-standard \
-	adwaita-icon-theme \
-	DEFAULT_BROWSER
+    alsa-utils \
+    xorg \
+    DEFAULT_WINDOW_MANAGER \
+    gnome-themes-standard \
+    adwaita-icon-theme \
+    DEFAULT_BROWSER
