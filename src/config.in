@@ -61,7 +61,7 @@ bindsym DEFAULT_I3_MODIFIER+Shift+r restart
 bindsym DEFAULT_I3_MODIFIER+Return exec "i3-sensible-terminal"
 bindsym DEFAULT_I3_MODIFIER+0 exec "DEFAULT_BROWSER"
 bindsym DEFAULT_I3_MODIFIER+9 exec "xrandr --output VGA-1 --auto"
-bindsym DEFAULT_I3_MODIFIER+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -b 'Yes' 'i3-msg exit'"
+bindsym DEFAULT_I3_MODIFIER+Shift+e exec "i3-msg exit"
 
 bindsym DEFAULT_I3_MODIFIER+1 workspace 1
 bindsym DEFAULT_I3_MODIFIER+2 workspace 2

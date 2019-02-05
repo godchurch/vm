@@ -142,7 +142,7 @@ bindsym Mod1+Shift+r restart
 bindsym Mod1+Return exec "i3-sensible-terminal"
 bindsym Mod1+0 exec "chromium-browser"
 bindsym Mod1+9 exec "xrandr --output VGA-1 --auto"
-bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -b 'Yes' 'i3-msg exit'"
+bindsym Mod1+Shift+e exec "i3-msg exit"
 
 bindsym Mod1+1 workspace 1
 bindsym Mod1+2 workspace 2
