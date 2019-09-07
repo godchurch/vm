@@ -11,7 +11,7 @@ DEVICE="${1%/}"
 CHROOT="${2%/}"
 
 DESTINATION="$CHROOT/tmp/chroot"
-INSTALL="alsa-utils xorg i3 rxvt-unicode gnome-themes-standard adwaita-icon-theme firefox"
+INSTALL="pulseaudio libavcodec-extra xorg i3 rxvt-unicode firefox"
 PURGE=""
 
 SED="\
