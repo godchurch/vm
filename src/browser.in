@@ -1,7 +1,0 @@
-#!/bin/sh
-
-m4_include(packages.in)
-m4_include(xinitrc.in)
-m4_include(gtkrc-2.0.in)
-m4_include(settings.ini.in)
-m4_include(config.in)
