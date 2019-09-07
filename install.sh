@@ -11,6 +11,7 @@ DEVICE="${1%/}"
 CHROOT="${2%/}"
 
 DESTINATION="$CHROOT/tmp/chroot"
+SKEL="$DESTINATION/skel"
 INSTALL="virtualbox-guest-x11 pulseaudio libavcodec-extra xorg i3 rxvt-unicode firefox"
 PURGE=""
 
@@ -38,7 +39,7 @@ mount tmp    "$CHROOT/tmp"     -t tmpfs    -o mode=1777,strictatime,nodev,nosuid
 
 test -d "$DESTINATION" || mkdir -p "$DESTINATION"      # does destination exist, create if not
 cp -R skel "$DESTINATION"                             # copy chroot files
-find "$DESTINATION/skel" -type f -exec sed -i "$SED" {} \;  # edit chroot files
+find "$DESTINATION" -type f -exec sed -i "$SED" {} \;  # edit chroot files
 
 if ! test -f "$CHROOT/run/systemd/resolve/stub-resolv.conf"; then
   mkdir -p "$CHROOT/run/systemd/resolve"
@@ -53,3 +54,6 @@ test -n "$INSTALL" && chroot "$CHROOT" apt-get install -y --no-install-recommend
 test -n "$PURGE" && chroot "$CHROOT" apt-get purge -y $PURGE
 chroot "$CHROOT" apt-get autoremove --purge -y
 chroot "$CHROOT" apt-get clean -y
+
+chroot "$CHROOT" -m -k "$SKEL" user
+chroot "$CHROOT" passwd user

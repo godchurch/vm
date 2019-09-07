@@ -10,21 +10,24 @@ if test -x /usr/bin/VBoxClient; then
 fi
 
 if test -x /usr/bin/pulseaudio; then
-  pulseaudio --check || pulseaudio --start
+  if pulseaudio --check; then
+    pulseaudio --start &
+    wait $!
+  fi
 
-#  SINK="$(pactl info | awk '/^Default Sink:/ { print $3 }')"
-#  SOURCE="$(pactl info | awk '/^Default Source:/ { print $3 }')"
-#
-#  test -n "$SINK" \
-#    && pactl suspend-sink "$SINK" 0 \
-#    && pactl set-sink-mute "$SINK" 0 \
-#    && pactl set-sink-volume "$SINK" 100%
-#  test -n "$SOURCE" \
-#    && pactl set-source-volume "$SOURCE" 0% \
-#    && pactl set-source-mute "$SOURCE" 1 \
-#    && pactl suspend-source "$SOURCE" 1
-#
-#  unset SINK SOURCE
+  SINK="$(pactl info | awk '/^Default Sink:/ { print $3 }')"
+  SOURCE="$(pactl info | awk '/^Default Source:/ { print $3 }')"
+
+  test -n "$SINK" \
+    && pactl suspend-sink "$SINK" 0 \
+    && pactl set-sink-mute "$SINK" 0 \
+    && pactl set-sink-volume "$SINK" 100%
+  test -n "$SOURCE" \
+    && pactl set-source-volume "$SOURCE" 0% \
+    && pactl set-source-mute "$SOURCE" 1 \
+    && pactl suspend-source "$SOURCE" 1
+
+  unset SINK SOURCE
 fi
 
 test -x /usr/bin/xsetroot && /usr/bin/xsetroot -solid 'DEFAULT_BACKGROUND_COLOR'
