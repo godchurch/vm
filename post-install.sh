@@ -7,6 +7,9 @@ fi
 
 set -e -x
 
+DEVICE="${1%/}"
+CHROOT="${2%/}"
+
 # mount file systems
 mount "$DEVICE" "$CHROOT"
 mount proc   "$CHROOT/proc"    -t proc     -o nosuid,nodev,noexec
@@ -21,4 +24,4 @@ DESTINATION="$CHROOT/tmp/chroot"
 
 test -d "$DESTINATION" || mkdir -p "$DESTINATION"           # does destination exist, create if not
 cp -R src/* "$DESTINATION"                                  # copy chroot files
-find "$CHROOT" -type f -exec sed -i -f "defaults.sed" {} \; # edit chroot files
+find "$DESTINATION" -type f -exec sed -i -f "defaults.sed" {} \; # edit chroot files
