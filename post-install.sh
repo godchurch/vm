@@ -19,6 +19,6 @@ mount tmp    "$CHROOT/tmp"     -t tmpfs    -o mode=1777,strictatime,nodev,nosuid
 
 DESTINATION="$CHROOT/tmp/chroot"
 
-test -d "$DESTINATION" || mkdir -p "$DESTINATION"  # does destination exist, create if not
-cp -R src/* "$DESTINATION"                         # copy chroot files
-find "$CHROOT" -type f -exec sed -i "$SED" {} \;   # edit chroot files
+test -d "$DESTINATION" || mkdir -p "$DESTINATION"           # does destination exist, create if not
+cp -R src/* "$DESTINATION"                                  # copy chroot files
+find "$CHROOT" -type f -exec sed -i -f "defaults.sed" {} \; # edit chroot files
