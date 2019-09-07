@@ -79,3 +79,5 @@ bar {
 	hidden_state hide
 	modifier DEFAULT_I3_MODIFIER
 }
+
+exec --no-startup-id DEFAULT_BROWSER

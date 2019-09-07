@@ -11,7 +11,7 @@ DEVICE="${1%/}"
 CHROOT="${2%/}"
 
 DESTINATION="$CHROOT/tmp/chroot"
-INSTALL="pulseaudio libavcodec-extra xorg i3 rxvt-unicode firefox"
+INSTALL="virtualbox-guest-x11 pulseaudio libavcodec-extra xorg i3 rxvt-unicode firefox"
 PURGE=""
 
 SED="\
@@ -37,8 +37,8 @@ mount run    "$CHROOT/run"     -t tmpfs    -o mode=0755,nosuid,nodev
 mount tmp    "$CHROOT/tmp"     -t tmpfs    -o mode=1777,strictatime,nodev,nosuid
 
 test -d "$DESTINATION" || mkdir -p "$DESTINATION"      # does destination exist, create if not
-cp -R src/* "$DESTINATION"                             # copy chroot files
-find "$DESTINATION" -type f -exec sed -i "$SED" {} \;  # edit chroot files
+cp -R skel "$DESTINATION"                             # copy chroot files
+find "$DESTINATION/skel" -type f -exec sed -i "$SED" {} \;  # edit chroot files
 
 if ! test -f "$CHROOT/run/systemd/resolve/stub-resolv.conf"; then
   mkdir -p "$CHROOT/run/systemd/resolve"
