@@ -9,11 +9,22 @@ if test -x /usr/bin/VBoxClient; then
   /usr/bin/VBoxClient --draganddrop      || true
 fi
 
-if test -x /usr/bin/amixer; then
-  /usr/bin/amixer set Master unmute
-  /usr/bin/amixer set Master 100%
-  /usr/bin/amixer set PCM unmute
-  /usr/bin/amixer set PCM 100%
+if test -x /usr/bin/pulseaudio && test -x /usr/bin/pactl; then
+  pulseaudio --check || pulseaudio --start
+
+  SINK="$(pactl info | sed -n '^Default[[:blank:]]\{1,\}Sink:[[:blank:]]\{1,\}\(.*\)$/\1/p')"
+  SOURCE="$(pactl info | sed -n '^Default[[:blank:]]\{1,\}Source:[[:blank:]]\{1,\}\(.*\)$/\1/p')"
+
+  test -n "$SINK" \
+    && pactl suspend-sink "$SINK" 0 \
+    && pactl set-sink-mute "$SINK" 0 \
+    && pactl set-sink-volume "$SINK" 100%
+  test -n "$SOURCE" \
+    && pactl set-source-volume "$SOURCE" 0% \
+    && pactl set-source-mute "$SOURCE" 1 \
+    && pactl suspend-source "$SOURCE" 1
+
+  unset SINK SOURCE
 fi
 
 test -x /usr/bin/xsetroot && /usr/bin/xsetroot -solid 'DEFAULT_BACKGROUND_COLOR'
