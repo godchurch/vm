@@ -19,10 +19,10 @@ test -n "$PURGE" && apt-get purge -y $PURGE
 apt-get autoremove --purge -y
 apt-get clean -y
 
-sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT="\).*\("\)$/\1/2/' /etc/default/grub
+sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT="\).*\("\)$/\1\2/' /etc/default/grub
 update-grub
 
-if test -d /etc/systemd/system/getty@tty1.service.d; then
+if ! test -d /etc/systemd/system/getty@tty1.service.d; then
   mkdir -p /etc/systemd/system/getty@tty1.service.d
 fi
 
