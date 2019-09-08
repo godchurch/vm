@@ -19,6 +19,19 @@ test -n "$PURGE" && apt-get purge -y $PURGE
 apt-get autoremove --purge -y
 apt-get clean -y
 
+sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT="\).*\("\)$/\1/2/' /etc/default/grub
+update-grub
+
+if test -d /etc/systemd/system/getty@tty1.service.d; then
+  mkdir -p /etc/systemd/system/getty@tty1.service.d
+fi
+
+cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << '_HEREDOC'
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin USERNAME --noclear %I \$TERM
+_HEREDOC
+
 sed -i 's/^\(\/swapfile\)/#\1/' /etc/fstab
 echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
 
