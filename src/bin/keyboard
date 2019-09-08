@@ -1,0 +1,3 @@
+#!/bin/sh
+
+test -x /usr/bin/setxkbmap && exec /usr/bin/setxkbmap -layout us -option caps:escape
