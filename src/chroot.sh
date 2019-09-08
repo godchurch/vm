@@ -29,14 +29,16 @@ fi
 cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << '_HEREDOC'
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin USERNAME --noclear %I \$TERM
+ExecStart=-/sbin/agetty --autologin user --noclear %I \$TERM
 _HEREDOC
 
 sed -i 's/^\(\/swapfile\)/#\1/' /etc/fstab
 echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
 
+rm -Rf /swapfile
+
 test -d /usr/local/bin || mkdir -p /usr/local/bin
 cp -R /tmp/bin/* /usr/local/bin
 
-useradd -m -k /tmp/skel user
+useradd -m -k /tmp/skel -s /bin/sh user
 passwd user
