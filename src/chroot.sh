@@ -19,6 +19,9 @@ test -n "$PURGE" && apt-get purge -y $PURGE
 apt-get autoremove --purge -y
 apt-get clean -y
 
+sed -i 's/^\(\/swapfile\)/#\1/' /etc/fstab
+echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
+
 test -d /usr/local/bin || mkdir -p /usr/local/bin
 cp -R /tmp/bin/* /usr/local/bin
 
