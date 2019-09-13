@@ -4,7 +4,7 @@ set -e -x
 
 NEW_USER="user"
 
-INSTALL="virtualbox-guest-x11 pulseaudio libavcodec-extra xorg i3 rxvt-unicode firefox"
+INSTALL="virtualbox-guest-x11 pulseaudio libavcodec-extra xorg i3 rxvt-unicode firefox mpv"
 PURGE=""
 
 if ! test -f /run/systemd/resolve/stub-resolv.conf; then
@@ -38,9 +38,7 @@ sed -i 's/^\(\/swapfile\)/#\1/' /etc/fstab
 echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
 
 rm -Rf /swapfile
-
-test -d /usr/local/bin || mkdir -p /usr/local/bin
-cp -R /tmp/bin/* /usr/local/bin
+cp -R /tmp/root/* /
 
 useradd -m -k /tmp/skel -s /bin/sh "$NEW_USER"
 passwd user << _HEREDOC
