@@ -40,7 +40,7 @@ echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
 rm -Rf /swapfile
 cp -R /tmp/root/* /
 
-useradd -m -k /tmp/skel -s /bin/sh "$NEW_USER"
+useradd -m -k /tmp/skel -s /usr/local/bin/customlogin "$NEW_USER"
 passwd user << _HEREDOC
 $NEW_USER
 $NEW_USER
