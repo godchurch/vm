@@ -36,6 +36,7 @@ _HEREDOC
 
 sed -i 's/^\(\/swapfile\)/#\1/' /etc/fstab
 echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
+echo "tmpfs /downloads tmpfs rw 0 0" >> /etc/fstab
 
 rm -Rf /swapfile
 cp -R /tmp/root/* /
