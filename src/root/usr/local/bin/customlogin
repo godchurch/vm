@@ -1,7 +1,5 @@
 #!/bin/sh
 
-ln -sf /downloads "$HOME/Downloads"
-
 test "$(tty)" = /dev/tty1 \
   && ! ps -U "$(id -u)" -o tty,comm | grep -qE '^tty1[[:blank:]]+i3$' \
   && exec startx
