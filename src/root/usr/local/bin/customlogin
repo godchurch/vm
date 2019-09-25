@@ -1,11 +1,5 @@
 #!/bin/sh
 
-test ! -f /ram/.firstlogin \
-  && cd "$HOME" \
-  && mv .[a-zA-Z0-9]* [a-zA-Z0-9]* /ram \
-  && ln -sfT /ram "$HOME" \
-  && touch "$HOME/.firstlogin"
-
 test "$(tty)" = /dev/tty1 \
   && ! ps -U "$(id -u)" -o tty,comm | grep -qE '^tty1[[:blank:]]+i3$' \
   && exec startx
