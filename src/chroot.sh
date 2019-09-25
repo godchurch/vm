@@ -35,8 +35,10 @@ ExecStart=-/sbin/agetty --autologin $NEW_USER --noclear %I \\\$TERM
 _HEREDOC
 
 sed -i 's/^\(\/swapfile\)/#\1/' /etc/fstab
-echo "tmpfs /tmp tmpfs rw,nosuid,nodev 0 0" >> /etc/fstab
-echo "tmpfs /downloads tmpfs rw 0 0" >> /etc/fstab
+cat >> /etc/fstab << _HEREDOC
+tmpfs /tmp tmpfs rw,nosuid,nodev 0 0
+tmpfs /downloads tmpfs rw 0 0
+_HEREDOC
 
 rm -Rf /swapfile
 cp -R /tmp/root/* /
