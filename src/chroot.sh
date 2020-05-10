@@ -4,7 +4,7 @@ set -e -x
 
 NEW_USER="user"
 
-INSTALL="virtualbox-guest-x11 pulseaudio libavcodec-extra unzip xorg i3 rxvt-unicode firefox mpv"
+INSTALL="virtualbox-guest-utils virtualbox-guest-x11 pulseaudio libavcodec-extra unzip xorg i3 rxvt-unicode firefox mpv"
 PURGE=""
 
 if ! test -f /run/systemd/resolve/stub-resolv.conf; then
