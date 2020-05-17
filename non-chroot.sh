@@ -12,7 +12,7 @@ printf "%s\n" "Checking kernel version..."
 CURRENT_KERNEL="$(uname -r 2> /dev/null)"
 
 printf "%s\n" "Creating package lists..."
-PACKAGES_TO_INSTALL="build-essential dkms linux-headers-${CURRENT_KERNEL} pulseaudio libavcodec-extra unzip xorg i3 rxvt-unicode firefox-esr mpv"
+PACKAGES_TO_INSTALL="build-essential dkms linux-headers-${CURRENT_KERNEL} alsa-utils libavcodec-extra unzip xorg i3 rxvt-unicode firefox-esr mpv"
 PACKAGES_TO_PURGE=""
 
 printf "%s\n" "Updating system..."
