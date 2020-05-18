@@ -2,6 +2,9 @@
 
 set -e
 
+GUEST_ADDITIONS=""
+test "$#" -eq 1 && GUEST_ADDITIONS="$1"
+
 NEW_USER="user"
 
 printf "%s\n" "Checking for root privileges..."
@@ -55,5 +58,7 @@ passwd user << _HEREDOC
 $NEW_USER
 $NEW_USER
 _HEREDOC
+
+test -n "$GUEST_ADDITIONS" && test -x "$GUEST_ADDITIONS" && "$GUEST_ADDITIONS"
 
 printf "%s\n" "Done!"
