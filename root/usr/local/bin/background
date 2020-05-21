@@ -1,3 +1,0 @@
-#!/bin/sh
-
-test -x /usr/bin/xsetroot && exec /usr/bin/xsetroot -solid '#AF5FAF'
