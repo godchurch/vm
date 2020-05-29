@@ -35,16 +35,17 @@ ExecStart=
 ExecStart=-/sbin/agetty --autologin $NEW_USER --noclear %I \\\$TERM
 _HEREDOC
 
+show "Creating ram directory..."; mkdir /ram
 show "Setting up tempfs..."
 cat >> /etc/fstab << _HEREDOC
 tmpfs /tmp tmpfs rw,nosuid,nodev 0 0
 tmpfs /ram tmpfs rw 0 0
 _HEREDOC
 
-show "Copying root files..."; cp -R root/* /
+show "Copying root files..."; cp -R "${0%/*}/root"/* /
 
 show "Creating new user..."
-useradd -m -k skel -s /usr/local/bin/customlogin "$NEW_USER"
+useradd -m -k "${0%/*}/skel" -s /usr/local/bin/customlogin "$NEW_USER"
 passwd user << _HEREDOC
 $NEW_USER
 $NEW_USER
