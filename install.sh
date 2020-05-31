@@ -18,7 +18,7 @@ show "Upgrading system..."; apt-get dist-upgrade -y
 
 show "Checking kernel version..."; CURRENT_KERNEL="$(uname -r 2> /dev/null)"
 show "Creating package lists..."
-PACKAGES_TO_INSTALL="build-essential dkms linux-headers-${CURRENT_KERNEL} alsa-utils libavcodec-extra unzip xorg i3 rxvt-unicode firefox-esr mpv"
+PACKAGES_TO_INSTALL="build-essential dkms linux-headers-${CURRENT_KERNEL} alsa-utils libavcodec-extra unzip xorg i3 xterm firefox-esr mpv"
 PACKAGES_TO_PURGE=""
 
 test -n "$PACKAGES_TO_INSTALL" && { show "Installing packages..."; apt-get install -y --no-install-recommends $PACKAGES_TO_INSTALL; }
@@ -52,5 +52,3 @@ $NEW_USER
 _HEREDOC
 
 test -n "$GUEST_ADDITIONS" && test -x "$GUEST_ADDITIONS" && "$GUEST_ADDITIONS"
-
-show "Done!"
