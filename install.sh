@@ -7,7 +7,7 @@ test "$EFFECTIVE_USER_ID" -eq 0
 MOUNT="${1%/}"; test -n "$MOUNT"
 
 DEFAULT_USERNAME="user"
-USERS_HOME="$MOUNT/home/$DEFAULT_USERNAME"
+USERS_HOME="/home/$DEFAULT_USERNAME"
 LOGIN_SCRIPT="$USERS_HOME/.local/bin/customlogin"
 SYSTEMD_SERVICE_DIR="/etc/systemd/system/getty@tty1.service.d"
 AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
