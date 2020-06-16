@@ -30,6 +30,7 @@ if test -e "$MOUNT/etc/resolv.conf" || test -L "$MOUNT/etc/resolv.conf"; then
   mount --bind "$MOUNT/run/default-resolv.conf" "$RESOLV_CONF"
 fi
 test -d "$MOUNT/dev" || mkdir "$MOUNT/dev"; mount --bind /dev "$MOUNT/dev"
+test -d "$MOUNT/tmp/skel" || mkdir "$MOUNT/tmp/skel"; mount --bind "${0%/*}/skel" "$MOUNT/tmp/skel"
 
 
 SYSTEMD_SERVICE="$MOUNT/etc/systemd/system/getty@tty1.service.d/autologin.conf"
@@ -60,10 +61,8 @@ cat >> "$MOUNT/etc/fstab" << _HEREDOC
 tmpfs /ram tmpfs rw 0 0
 _HEREDOC
 
-cp -R skel "$MOUNT/tmp/skel"
-
 _CHROOT() { LC_ALL=C chroot "$MOUNT" "$@"; }
-_CHROOT useradd -m -k "tmp/skel" -s "${CUSTOM_LOGIN#$MOUNT}" "$DEFAULT_USERNAME"
+_CHROOT useradd -m -k "/tmp/skel" -s "${CUSTOM_LOGIN#$MOUNT}" "$DEFAULT_USERNAME"
 _CHROOT passwd "$DEFAULT_USERNAME" << _HEREDOC
 $DEFAULT_USERNAME
 $DEFAULT_USERNAME
