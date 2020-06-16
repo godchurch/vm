@@ -9,6 +9,8 @@ MOUNT="${1%/}"; test -n "$MOUNT"
 DEFAULT_USERNAME="user"
 USERS_HOME="$MOUNT/home/$DEFAULT_USERNAME"
 LOGIN_SCRIPT="$USERS_HOME/.local/bin/customlogin"
+SYSTEMD_SERVICE_DIR="/etc/systemd/system/getty@tty1.service.d"
+AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
 PKGS_TO_INSTALL="alsa-utils pulseaudio libavcodec-extra unzip curl xorg i3 xterm mpv firefox"
 PKGS_TO_PURGE=""
 
@@ -33,24 +35,26 @@ fi
 test -d "$MOUNT/dev" || mkdir "$MOUNT/dev"; mount --bind /dev "$MOUNT/dev"
 test -d "$MOUNT/tmp/skel" || mkdir "$MOUNT/tmp/skel"; mount --bind "${0%/*}/skel" "$MOUNT/tmp/skel"
 
-SYSTEMD_SERVICE_DIR="/etc/systemd/system/getty@tty1.service.d/"
-AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
-LC_ALL=C chroot "$MOUNT" mkdir -p "$SYSTEMD_SERVICE_DIR"
-LC_ALL=C chroot "$MOUNT" cat > "$SYSTEMD_SERVICE" << _HEREDOC
+LC_ALL=C chroot "$MOUNT" /bin/sh -c "
+set -ex
+mkdir -p '$SYSTEMD_SERVICE_DIR'
+cat > '$AUTOLOGIN_SERVICE' << _HEREDOC
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin $DEFAULT_USERNAME --noclear %I \\\$TERM
+ExecStart=-/sbin/agetty --autologin '$DEFAULT_USERNAME' --noclear %I \\\$TERM
 _HEREDOC
-LC_ALL=C chroot "$MOUNT" mkdir -p /ram
-LC_ALL=C chroot "$MOUNT" cat >> "/etc/fstab" << _HEREDOC
+mkdir -p /ram
+cat >> /etc/fstab << _HEREDOC
 tmpfs /ram tmpfs rw 0 0
 _HEREDOC
-LC_ALL=C chroot "$MOUNT" useradd -m -k "/tmp/skel" -d "$USERS_HOME" -s "$LOGIN_SCRIPT" "$DEFAULT_USERNAME"
-LC_ALL=C chroot "$MOUNT" passwd "$DEFAULT_USERNAME" << _HEREDOC
+useradd -m -k /tmp/skel -d '$USERS_HOME' -s '$LOGIN_SCRIPT' '$DEFAULT_USERNAME'
+passwd '$DEFAULT_USERNAME' << _HEREDOC
 $DEFAULT_USERNAME
 $DEFAULT_USERNAME
 _HEREDOC
-LC_ALL=C chroot "$MOUNT" cp -R /etc/skel "$USERS_HOME"
+cp -R /etc/skel '$USERS_HOME'
+"
+
 LC_ALL=C chroot "$MOUNT" apt-get update -y
 LC_ALL=C chroot "$MOUNT" apt-get dist-upgrade -y
 test -n "$PKGS_TO_INSTALL" && LC_ALL=C chroot "$MOUNT" apt-get install -y --no-install-recommends $PKGS_TO_INSTALL
