@@ -49,7 +49,6 @@ passwd '$DEFAULT_USERNAME' << _HEREDOC
 $DEFAULT_USERNAME
 $DEFAULT_USERNAME
 _HEREDOC
-cp -R /etc/skel/* '$USERS_HOME'
 apt-get update -y
 apt-get dist-upgrade -y
 test -n '$PKGS_TO_INSTALL' && apt-get install -y --no-install-recommends $PKGS_TO_INSTALL
