@@ -63,7 +63,7 @@ _HEREDOC
 cp -R skel "$MOUNT/tmp/skel"
 
 _CHROOT() { LC_ALL=C chroot "$MOUNT" "$@"; }
-_CHROOT useradd -m -k "tmp/skel" -s "${CUSTOM_LOGIN#$MOUNT} "$DEFAULT_USERNAME"
+_CHROOT useradd -m -k "tmp/skel" -s "${CUSTOM_LOGIN#$MOUNT}" "$DEFAULT_USERNAME"
 _CHROOT passwd "$DEFAULT_USERNAME" << _HEREDOC
 $DEFAULT_USERNAME
 $DEFAULT_USERNAME
