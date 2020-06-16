@@ -1,7 +1,0 @@
-#!/bin/sh
-
-test "$(tty)" = /dev/tty1 \
-  && ! ps -U "$(id -u)" -o tty,comm | grep -qE '^tty1[[:blank:]]+i3$' \
-  && exec startx
-
-exec /bin/bash
