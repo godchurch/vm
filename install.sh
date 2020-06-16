@@ -1,9 +1,7 @@
 #!/bin/sh
 
 set -ex
-EFFECTIVE_USER_ID="$(id -u)"
-test "$EFFECTIVE_USER_ID" -eq 0
-
+EFFECTIVE_USER_ID="$(id -u)"; test "$EFFECTIVE_USER_ID" -eq 0
 MOUNT="${1%/}"; test -n "$MOUNT"
 
 DEFAULT_USERNAME="user"
@@ -35,8 +33,7 @@ fi
 test -d "$MOUNT/dev" || mkdir "$MOUNT/dev"; mount --bind /dev "$MOUNT/dev"
 test -d "$MOUNT/tmp/skel" || mkdir "$MOUNT/tmp/skel"; mount --bind "${0%/*}/skel" "$MOUNT/tmp/skel"
 
-LC_ALL=C chroot "$MOUNT" /bin/sh -c "
-set -ex
+LC_ALL=C chroot "$MOUNT" /bin/sh -c "set -ex
 mkdir -p '$SYSTEMD_SERVICE_DIR'
 cat > '$AUTOLOGIN_SERVICE' << _HEREDOC
 [Service]
@@ -53,11 +50,9 @@ $DEFAULT_USERNAME
 $DEFAULT_USERNAME
 _HEREDOC
 cp -R /etc/skel '$USERS_HOME'
-"
-
-LC_ALL=C chroot "$MOUNT" apt-get update -y
-LC_ALL=C chroot "$MOUNT" apt-get dist-upgrade -y
-test -n "$PKGS_TO_INSTALL" && LC_ALL=C chroot "$MOUNT" apt-get install -y --no-install-recommends $PKGS_TO_INSTALL
-test -n "$PKGS_TO_PURGE" && LC_ALL=C chroot "$MOUNT" apt-get purge -y $PKGS_TO_PURGE
-LC_ALL=C chroot "$MOUNT" apt-get autoremove --purge -y
-LC_ALL=C chroot "$MOUNT" apt-get clean -y
+apt-get update -y
+apt-get dist-upgrade -y
+test -n '$PKGS_TO_INSTALL' && apt-get install -y --no-install-recommends $PKGS_TO_INSTALL
+test -n '$PKGS_TO_PURGE' && apt-get purge -y $PKGS_TO_PURGE
+apt-get autoremove --purge -y
+apt-get clean -y"
