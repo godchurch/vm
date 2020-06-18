@@ -44,10 +44,12 @@ mkdir -p /ram
 cat >> /etc/fstab << _HEREDOC
 tmpfs /ram tmpfs rw 0 0
 _HEREDOC
-useradd -m -k /tmp/skel -d '$USERS_HOME' -s '$LOGIN_SCRIPT' '$DEFAULT_USERNAME'
 for FILE in .bash_logout .bashrc .profile; do
-  test ! -f \"$USERS_HOME/\$FILE\" && test -f \"/etc/skel/\$FILE\" && cp \"/etc/skel/\$FILE\" '$USERS_HOME'
+  test ! -f \"/tmp/skel/\$FILE\" \
+    && test -f \"/etc/skel/\$FILE\" \
+    && cp \"/etc/skel/\$FILE\" \"/tmp/skel/\$FILE\"
 done
+useradd -m -k /tmp/skel -d '$USERS_HOME' -s '$LOGIN_SCRIPT' '$DEFAULT_USERNAME'
 passwd '$DEFAULT_USERNAME' << _HEREDOC
 $DEFAULT_USERNAME
 $DEFAULT_USERNAME
