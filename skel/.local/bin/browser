@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+command -v firefox > /dev/null
+
+if test -f "$HOME/.mozilla/firefox/defaultUser/prefs.js"; then
+  exec firefox -P defaultUser
+else
+  firefox -CreateProfile "defaultUser $HOME/.mozilla/firefox/defaultUser"
+  exec firefox -P defaultUser -preferences
+fi
