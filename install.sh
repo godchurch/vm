@@ -4,6 +4,8 @@ set -ex
 EFFECTIVE_USER_ID="$(id -u)"; test "$EFFECTIVE_USER_ID" -eq 0
 MOUNT="${1%/}"; test -n "$MOUNT"
 
+SCRIPT_DIR="${0%/*}"
+
 DEFAULT_USERNAME="user"
 USERS_HOME="/home/$DEFAULT_USERNAME"
 LOGIN_SCRIPT="$USERS_HOME/.local/bin/customlogin"
@@ -11,6 +13,11 @@ SYSTEMD_SERVICE_DIR="/etc/systemd/system/getty@tty1.service.d"
 AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
 PKGS_TO_INSTALL="alsa-utils pulseaudio libavcodec-extra unzip curl xorg i3 xterm mpv firefox"
 PKGS_TO_PURGE=""
+
+USERJS="$SCRIPT_DIR/skel/user.js"
+USERJS_LINK="https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
+
+curl -o "$USERJS" "$USERJS_LINK"
 
 mountpoint -q "$MOUNT";
 test -d "$MOUNT/proc" || mkdir "$MOUNT/proc"; mount -t proc proc "$MOUNT/proc"
