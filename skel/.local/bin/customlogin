@@ -1,5 +1,12 @@
 #!/bin/sh
 
+test -d "$HOME/.local/bin" && { \
+  test -z "$PATH" || {
+    test -n "${PATH%%$HOME/.local/bin*}" \
+      && test -n "${PATH%%*:$HOME/.local/bin*}"
+  }
+} && PATH="$HOME/.local/bin${PATH:+:$PATH}"
+
 test "$(tty)" = /dev/tty1 \
   && ! ps -U "$(id -u)" -o tty,comm | grep -qE '^tty1[[:blank:]]+i3$' \
   && exec startx
