@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+if ! test -f "$HOME/.mozilla/firefox/defaultUser/prefs.js" && test -f "$HOME/user.js"; then
+  firefox -CreateProfile "defaultUser $HOME/.mozilla/firefox/defaultUser"
+  cp "$HOME/user.js" "$HOME/.mozilla/firefox/defaultUser"
+fi
+
+exec firefox -P defaultUser
