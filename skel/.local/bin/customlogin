@@ -8,7 +8,7 @@ test -d "$HOME/.local/bin" && { \
 } && PATH="$HOME/.local/bin${PATH:+:$PATH}"
 
 test "$(tty)" = /dev/tty1 \
-  && ! ps -U "$(id -u)" -o tty,comm | grep -qE '^tty1[[:blank:]]+i3$' \
+  && ! ps -U "$(id -u)" -o tty,comm | grep -q '^tty1[[:blank:]]\{1,\}i3$' \
   && exec startx
 
 exec /bin/bash
