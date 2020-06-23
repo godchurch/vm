@@ -14,11 +14,6 @@ AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
 PKGS_TO_INSTALL="alsa-utils pulseaudio libavcodec-extra unzip curl xorg i3 xterm mpv firefox"
 PKGS_TO_PURGE=""
 
-USERJS="$SCRIPT_DIR/skel/user.js"
-USERJS_LINK="https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
-
-curl -o "$USERJS" "$USERJS_LINK"
-
 mountpoint -q "$MOUNT";
 test -d "$MOUNT/proc" || mkdir "$MOUNT/proc"; mount -t proc proc "$MOUNT/proc"
 test -d "$MOUNT/sys" || mkdir "$MOUNT/sys"; mount -t sysfs sysfs "$MOUNT/sys"
