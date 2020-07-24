@@ -134,7 +134,7 @@ deb http://security.ubuntu.com/ubuntu ${CODENAME}-security multiverse
 # deb-src http://security.ubuntu.com/ubuntu ${CODENAME}-security multiverse
 _EOF
 
-LC_ALL=C chroot "$MOUNT" /bin/sh -c "set -ex
+LC_ALL=C chroot "$BUILD_DIR" /bin/sh -c "set -ex
 set -ex
 mkdir -p '$SYSTEMD_SERVICE_DIR'
 cat > '$AUTOLOGIN_SERVICE' << _HEREDOC
