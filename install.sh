@@ -6,7 +6,7 @@ test "$EFFECTIVE_USER_ID" -eq 0
 test $# -ge 1
 DEV="$1"
 PART="${DEV}1"
-test $# -eq 2 && CODENAME="$2" || CODENAME=""
+test $# -eq 2 && CODENAME="$2" || CODENAME="$(lsb_release -sc)"
 BUILD_DIR="/target"
 
 command -v debootstrap
@@ -29,7 +29,6 @@ sfdisk --part-type "$DEV" 1 83
 sfdisk -A "$DEV" 1
 mkfs.ext4 "$PART"
 test -d "$BUILD_DIR" || mkdir "$BUILD_DIR"; mount "$PART" "$BUILD_DIR"
-test -z "$CODENAME" && CODENAME="$(lsb_release -sc)"
 
 debootstrap --arch amd64 "$CODENAME" "$BUILD_DIR"
 
@@ -51,7 +50,7 @@ if test -e "$BUILD_DIR/etc/resolv.conf" || test -L "$BUILD_DIR/etc/resolv.conf";
   mount --bind "$BUILD_DIR/run/default-resolv.conf" "$RESOLV_CONF"
 fi
 test -d "$BUILD_DIR/dev" || mkdir "$BUILD_DIR/dev"; mount --bind /dev "$BUILD_DIR/dev"
-test -d "$MOUNT/tmp/skel" || mkdir "$MOUNT/tmp/skel"; mount --bind "${0%/*}/skel" "$MOUNT/tmp/skel"
+test -d "$BUILD_DIR/tmp/skel" || mkdir "$BUILD_DIR/tmp/skel"; mount --bind "${0%/*}/skel" "$BUILD_DIR/tmp/skel"
 
 DEVICE_LINE="$(blkid "$PART")"
 UUID="$(printf "%s\n" "$DEVICE_LINE" | sed 's/^.*[[:blank:]]\(UUID=\)"\([^"]\{1,\}\)"[[:blank:]].*$/\1\2/')"
