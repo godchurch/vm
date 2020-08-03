@@ -1,41 +1,46 @@
 #!/bin/sh
 
 set -ex
+
 EFFECTIVE_USER_ID="$(id -u)"
 test "$EFFECTIVE_USER_ID" -eq 0
-test $# -ge 1
-DEV="$1"
-PART="${DEV}1"
-test $# -eq 2 && CODENAME="$2" || CODENAME="$(lsb_release -sc)"
-BUILD_DIR="/target"
 
 command -v debootstrap
 command -v sfdisk
 
+test $# -ge 1
+test $# -eq 2 && CODENAME="$2" || CODENAME="$(lsb_release -sc)"
+
 SCRIPT_DIR="${0%/*}"
+
+DEV="$1"
+PART="${DEV}1"
+
+BUILD_DIR="/target"
 
 DEFAULT_USERNAME="user"
 USERS_HOME="/home/$DEFAULT_USERNAME"
 LOGIN_SCRIPT="$USERS_HOME/.local/bin/customlogin"
 SYSTEMD_SERVICE_DIR="/etc/systemd/system/getty@tty1.service.d"
 AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
-PKGS_TO_INSTALL="linux-image-generic linux-headers-generic grub-pc build-essential spice-vdagent alsa-utils pulseaudio libavcodec-extra unzip curl xorg i3 xterm mpv firefox"
+PKGS_TO_INSTALL="linux-image-generic linux-headers-generic grub-pc build-essential alsa-utils pulseaudio libavcodec-extra unzip curl xorg i3 xterm mpv firefox"
 PKGS_TO_PURGE=""
 
-sfdisk "$DEV" << EOF
+sfdisk -f "$DEV" << EOF
 2048,
 EOF
-sfdisk --part-type "$DEV" 1 83
-sfdisk -A "$DEV" 1
+sfdisk -f --part-type "$DEV" 1 83
+sfdisk -f -A "$DEV" 1
 mkfs.ext4 "$PART"
-test -d "$BUILD_DIR" || mkdir "$BUILD_DIR"; mount "$PART" "$BUILD_DIR"
+
+mkdir -p "$BUILD_DIR"; mount "$PART" "$BUILD_DIR"
 
 debootstrap --arch amd64 "$CODENAME" "$BUILD_DIR"
 
-test -d "$BUILD_DIR/proc" || mkdir "$BUILD_DIR/proc"; mount -t proc proc "$BUILD_DIR/proc"
-test -d "$BUILD_DIR/sys" || mkdir "$BUILD_DIR/sys"; mount -t sysfs sysfs "$BUILD_DIR/sys"
-test -d "$BUILD_DIR/tmp" || mkdir "$BUILD_DIR/tmp"; mount -t tmpfs tmpfs "$BUILD_DIR/tmp"
-test -d "$BUILD_DIR/run" || mkdir "$BUILD_DIR/run"; mount -t tmpfs run "$BUILD_DIR/run"
+mkdir -p "$BUILD_DIR/proc"; mount -t proc proc "$BUILD_DIR/proc"
+mkdir -p "$BUILD_DIR/sys"; mount -t sysfs sysfs "$BUILD_DIR/sys"
+mkdir -p "$BUILD_DIR/tmp"; mount -t tmpfs tmpfs "$BUILD_DIR/tmp"
+mkdir -p "$BUILD_DIR/run"; mount -t tmpfs run "$BUILD_DIR/run"
 if test -e "$BUILD_DIR/etc/resolv.conf" || test -L "$BUILD_DIR/etc/resolv.conf"; then
   RESOLV_CONF="$BUILD_DIR/etc/resolv.conf"
   printf "%s\n" "nameserver 1.1.1.1" > "$BUILD_DIR/run/default-resolv.conf"
@@ -49,17 +54,16 @@ if test -e "$BUILD_DIR/etc/resolv.conf" || test -L "$BUILD_DIR/etc/resolv.conf";
   fi
   mount --bind "$BUILD_DIR/run/default-resolv.conf" "$RESOLV_CONF"
 fi
-test -d "$BUILD_DIR/dev" || mkdir "$BUILD_DIR/dev"; mount --bind /dev "$BUILD_DIR/dev"
-test -d "$BUILD_DIR/tmp/skel" || mkdir "$BUILD_DIR/tmp/skel"; mount --bind "${0%/*}/skel" "$BUILD_DIR/tmp/skel"
+mkdir -p "$BUILD_DIR/dev"; mount --bind /dev "$BUILD_DIR/dev"
+mkdir -p "$BUILD_DIR/tmp/skel"; mount --bind "${0%/*}/skel" "$BUILD_DIR/tmp/skel"
 
 DEVICE_LINE="$(blkid "$PART")"
 UUID="$(printf "%s\n" "$DEVICE_LINE" | sed 's/^.*[[:blank:]]\(UUID=\)"\([^"]\{1,\}\)"[[:blank:]].*$/\1\2/')"
 TYPE="$(printf "%s\n" "$DEVICE_LINE" | sed 's/^.*[[:blank:]]TYPE="\([^"]\{1,\}\)"[[:blank:]].*$/\1/')"
 
-AWK='BEGIN{ printf "network:\n  version: 2\n  renderer: %s\n  ethernets:", "networkd" }
-/^[0-9]+/ && $2 != "lo:" { printf "\n    %s\n      dhcp4: true", $2 }'
 IP="$(ip link show)"
-FORMATED_IP="$(printf "%s\n" "$IP" | awk "$AWK")"
+FORMATED_IP="$(printf "%s\n" "$IP" | awk 'BEGIN{ printf "network:\n  version: 2\n  renderer: %s\n  ethernets:", "networkd" }
+/^[0-9]+/ && $2 != "lo:" { printf "\n    %s\n      dhcp4: true", $2 }')"
 
 mkdir -p "$BUILD_DIR/etc/netplan"
 cat > "$BUILD_DIR/etc/netplan/01-netcfg.yaml" << _EOF
@@ -133,8 +137,9 @@ deb http://security.ubuntu.com/ubuntu ${CODENAME}-security multiverse
 # deb-src http://security.ubuntu.com/ubuntu ${CODENAME}-security multiverse
 _EOF
 
-LC_ALL=C chroot "$BUILD_DIR" /bin/sh -c "set -ex
-set -ex
+LC_ALL=C chroot "$BUILD_DIR" /bin/sh -c "#!/bin/sh
+set -e
+set -x
 mkdir -p '$SYSTEMD_SERVICE_DIR'
 cat > '$AUTOLOGIN_SERVICE' << _HEREDOC
 [Service]
@@ -157,7 +162,7 @@ $DEFAULT_USERNAME
 _HEREDOC
 apt-get update -y
 apt-get dist-upgrade -y
-test -n '$PKGS_TO_INSTALL' && apt-get install -y --no-install-recommends $PKGS_TO_INSTALL
+test -n '$PKGS_TO_INSTALL' && apt-get install -y $PKGS_TO_INSTALL
 test -n '$PKGS_TO_PURGE' && apt-get purge -y $PKGS_TO_PURGE
 apt-get autoremove --purge -y
 apt-get clean -y"
