@@ -112,7 +112,7 @@ test -n '$PKGS_TO_PURGE' && apt-get purge -y $PKGS_TO_PURGE
 apt-get autoremove --purge -y
 apt-get clean -y
 sed 's/^\(GRUB_CMDLINE_LINUX_DEFAULT\)=\".*\"$/#&\\
-\1=\"\"' /etc/default/grub > /tmp/grub_file
+\1=\"\"/' /etc/default/grub > /tmp/grub_file
 cp /tmp/grub_file /etc/default/grub
 mkdir -p '$SYSTEMD_SERVICE_DIR'
 cat > '$AUTOLOGIN_SERVICE' << _HEREDOC
