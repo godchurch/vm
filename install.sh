@@ -14,7 +14,8 @@ test $# -eq 2 && CODENAME="$2" || CODENAME="$(lsb_release -sc)"
 SCRIPT_DIR="${0%/*}"
 
 DEV="$1"
-PART="${DEV}1"
+PART_1="${DEV}1"
+PART_2="${DEV}2"
 
 BUILD_DIR="/target"
 
@@ -26,14 +27,27 @@ AUTOLOGIN_SERVICE="$SYSTEMD_SERVICE_DIR/autologin.conf"
 PKGS_TO_INSTALL="linux-image-generic linux-headers-generic grub-pc build-essential alsa-utils pulseaudio libavcodec-extra unzip curl xorg i3 xterm mpv firefox"
 PKGS_TO_PURGE=""
 
-sfdisk -f "$DEV" << EOF
-2048,
-EOF
-sfdisk -f --part-type "$DEV" 1 83
-sfdisk -f -A "$DEV" 1
-mkfs.ext4 "$PART"
+fdisk "$DEV" << EOF
+g
+n
 
-mkdir -p "$BUILD_DIR"; mount "$PART" "$BUILD_DIR"
+
+4095
+n
+
+4096
+
+t
+1
+4
+t
+2
+20
+w
+EOF
+mkfs.ext4 "$PART_2"
+
+mkdir -p "$BUILD_DIR"; mount "$PART_2" "$BUILD_DIR"
 
 debootstrap --arch amd64 "$CODENAME" "$BUILD_DIR"
 
@@ -57,9 +71,9 @@ fi
 mkdir -p "$BUILD_DIR/dev"; mount --bind /dev "$BUILD_DIR/dev"
 mkdir -p "$BUILD_DIR/tmp/skel"; mount --bind "${0%/*}/skel" "$BUILD_DIR/tmp/skel"
 
-DEVICE_LINE="$(blkid "$PART")"
+DEVICE_LINE="$(blkid "$PART_2")"
 DEVICE_LINE="$(printf "%s\n" "$DEVICE_LINE" \
-  | sed 's/^.*[[:blank:]]UUID="\([^"]\{1,\}\).*[[:blank:]]TYPE="\([^"]\{1,\}\)".*$/UUID=\1 \/ \2 defaults 0 1/')"
+  | sed 's/^.*[[:blank:]]UUID="\([^"]\{1,\}\).*[[:blank:]]TYPE="\([^"]\{1,\}\)".*$/UUID=\1 \/ \2/')"
 
 ETHERNET="$(ip link show)"
 ETHERNET="$(printf "%s\n" "$ETHERNET" \
