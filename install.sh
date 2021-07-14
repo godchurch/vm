@@ -58,20 +58,24 @@ mkdir -p "$BUILD_DIR/dev"; mount --bind /dev "$BUILD_DIR/dev"
 mkdir -p "$BUILD_DIR/tmp/skel"; mount --bind "${0%/*}/skel" "$BUILD_DIR/tmp/skel"
 
 DEVICE_LINE="$(blkid "$PART")"
-UUID="$(printf "%s\n" "$DEVICE_LINE" | sed 's/^.*[[:blank:]]\(UUID=\)"\([^"]\{1,\}\)"[[:blank:]].*$/\1\2/')"
-TYPE="$(printf "%s\n" "$DEVICE_LINE" | sed 's/^.*[[:blank:]]TYPE="\([^"]\{1,\}\)"[[:blank:]].*$/\1/')"
+DEVICE_LINE="$(printf "%s\n" "$DEVICE_LINE" \
+  | sed 's/^.*[[:blank:]]UUID="\([^"]\{1,\}\).*[[:blank:]]TYPE="\([^"]\{1,\}\)".*$/UUID=\1 \/ \2 defaults 0 1/')"
 
-IP="$(ip link show)"
-FORMATED_IP="$(printf "%s\n" "$IP" | awk 'BEGIN{ printf "network:\n  version: 2\n  renderer: %s\n  ethernets:", "networkd" }
-/^[0-9]+/ && $2 != "lo:" { printf "\n    %s\n      dhcp4: true", $2 }')"
+ETHERNET="$(ip link show)"
+ETHERNET="$(printf "%s\n" "$ETHERNET" \
+  | sed -n 's/^[[:digit:]]*: \([[:alnum:]]*\):.*$/\1/p' | grep -v 'lo')"
 
 mkdir -p "$BUILD_DIR/etc/netplan"
 cat > "$BUILD_DIR/etc/netplan/01-netcfg.yaml" << _EOF
-${FORMATED_IP}
+network:
+  ethernets:
+    ${ETHERNET}:
+      dhcp4: true
+  version: 2
 _EOF
 
 cat > "$BUILD_DIR/etc/fstab" << _EOF
-${UUID} / ${TYPE} errors=remount-ro 0 1
+${DEVICE_LINE} defaults 0 1
 tmpfs /tmp tmpfs nosuid,nodev 0 0
 _EOF
 
@@ -87,19 +91,10 @@ _EOF
 mkdir -p "$BUILD_DIR/etc/apt"
 cat > "$BUILD_DIR/etc/apt/sources.list" << _EOF
 deb http://archive.ubuntu.com/ubuntu/ ${CODENAME} main restricted universe multiverse
-# deb-src http://archive.ubuntu.com/ubuntu/ ${CODENAME} main restricted universe multiverse
-
 deb http://archive.ubuntu.com/ubuntu/ ${CODENAME}-updates main restricted universe multiverse
-# deb-src http://archive.ubuntu.com/ubuntu/ ${CODENAME}-updates main restricted universe multiverse
-
 deb http://archive.ubuntu.com/ubuntu/ ${CODENAME}-backports main restricted universe multiverse
-# deb-src http://archive.ubuntu.com/ubuntu/ ${CODENAME}-backports main restricted universe multiverse
-
-# deb http://archive.canonical.com/ubuntu ${CODENAME} partner
-# deb-src http://archive.canonical.com/ubuntu ${CODENAME} partner
-
 deb http://security.ubuntu.com/ubuntu ${CODENAME}-security main restricted universe multiverse
-# deb-src http://security.ubuntu.com/ubuntu ${CODENAME}-security main restricted universe multiverse
+# deb http://archive.canonical.com/ubuntu ${CODENAME} partner
 _EOF
 
 LC_ALL=C chroot "$BUILD_DIR" /bin/sh -c "#!/bin/sh
